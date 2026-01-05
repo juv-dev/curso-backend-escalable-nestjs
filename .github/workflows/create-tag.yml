@@ -1,4 +1,4 @@
-name: Call Tag on merge (uses reusable)
+name: Call Tag on merge
 
 on:
   pull_request:
@@ -10,6 +10,6 @@ permissions:
 
 jobs:
   call-tag:
-    uses: juv-dev/workflows-frontend/.github/workflows/create-tag.yml@main
+    uses: ./.github/workflows/create-tag.yml@main
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
