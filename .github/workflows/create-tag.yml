@@ -10,6 +10,6 @@ permissions:
 
 jobs:
   call-tag:
-    uses: ./.github/workflows/create-tag.yml@main
+    uses: juv-dev/workflows-frontend/.github/workflows/create-tag.yml@main
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
