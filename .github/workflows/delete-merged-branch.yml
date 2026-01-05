@@ -1,0 +1,10 @@
+name: Check PR Title
+
+on:
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  delete-merged-branch:
+    uses: juv-dev/workflows-frontend/.github/workflows/delete-branch-after-merge.yml@main
