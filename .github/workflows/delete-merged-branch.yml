@@ -6,5 +6,5 @@ on:
     types: [opened, synchronize, reopened, edited]
 
 jobs:
-  check-pr-title:
-    uses: juv-dev/workflows-frontend/.github/workflows/check-pr-title.yml@main
+  delete-merged-branch:
+    uses: juv-dev/workflows-frontend/.github/workflows/delete-branch-after-merge.yml@main

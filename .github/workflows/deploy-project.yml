@@ -19,6 +19,6 @@ jobs:
 
   deploy:
     needs: get-version
-    uses: devops/workflows/.github/workflows/deploy-project.yml@main
+    uses: juv-dev/workflows-frontend/.github/workflows/deploy-project.yml@main
     with:
       version: ${{ needs.get-version.outputs.version }}

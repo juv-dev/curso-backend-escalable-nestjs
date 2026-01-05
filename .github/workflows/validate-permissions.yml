@@ -6,6 +6,6 @@ on:
 
 jobs:
   validate-branch:
-    uses: devops/workflows/.github/workflows/validate-branch.yml@main
+    uses: juv-dev/workflows-frontend/.github/workflows/validate-branch.yml@main
     with:
       allowed_branches: "main,develop"
