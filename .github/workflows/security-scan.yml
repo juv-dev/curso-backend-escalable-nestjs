@@ -10,7 +10,7 @@ on:
 
 jobs:
   security:
-    uses: devops/workflows/.github/workflows/snyk-security.yml@main
+    uses: juv-dev/workflows-frontend/.github/workflows/snyk-security.yml@main
     with:
       node-version: '20'
       severity: high

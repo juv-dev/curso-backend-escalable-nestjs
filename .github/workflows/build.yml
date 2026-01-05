@@ -15,7 +15,7 @@ jobs:
     if: |
       github.event_name != 'workflow_run' ||
       github.event.workflow_run.conclusion == 'success'
-    uses: devops/workflows/.github/workflows/build-project.yml@main
+    uses: juv-dev/workflows-frontend/.github/workflows/build-project.yml@main
     with:
       node_version: '20'
       create_env: true
