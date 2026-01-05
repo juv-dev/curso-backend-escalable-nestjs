@@ -9,6 +9,6 @@ permissions:
 
 jobs:
   call-bump:
-    uses: juv-dev/workflows-frontend/.github/workflows/create-version.yml@
+    uses: juv-dev/workflows-frontend/.github/workflows/create-version.yml@main
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
