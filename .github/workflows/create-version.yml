@@ -1,0 +1,13 @@
+name: Call shared PR bump
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  call-bump:
+    uses: juv-dev/workflows-frontend/.github/workflows/version-project.yml@main
