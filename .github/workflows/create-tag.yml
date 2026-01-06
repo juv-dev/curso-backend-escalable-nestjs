@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  call-tag:
+  tag-version:
     # Esta condición es CRÍTICA: solo continúa si el PR se cerró CON MERGE
     if: github.event.pull_request.merged == true
     
