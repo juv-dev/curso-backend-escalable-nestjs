@@ -1,18 +1,12 @@
-name: Call PR bump
+name: Create Version
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, synchronize, reopened]
     branches: [main]
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   bump-version:
     uses: juv-dev/workflows-frontend/.github/workflows/create-version.yml@main
     with:
       ref: ${{ github.event.pull_request.head.ref }}
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
