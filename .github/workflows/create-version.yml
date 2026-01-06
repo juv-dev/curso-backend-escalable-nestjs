@@ -7,7 +7,12 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   bump-version:
     uses: juv-dev/workflows-frontend/.github/workflows/create-version.yml@main
+    with:
+      ref: ${{ github.event.pull_request.head.ref }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
