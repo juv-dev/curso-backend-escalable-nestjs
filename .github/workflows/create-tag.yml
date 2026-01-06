@@ -2,8 +2,8 @@ name: Call Tag on merge
 
 on:
   pull_request:
-    types: [closed]  # Se activa cuando el PR se cierra (con o sin merge)
-    branches: [main]  # Solo para PRs que apuntan a la rama main
+    types: [closed]
+    branches: [main]
 
 permissions:
   contents: write
@@ -15,4 +15,4 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.merge_commit_sha }}
     secrets:
-      repo_token: ${{ secrets.GITHUB_TOKEN }}  # Asegúrate de que sea `repo_token` aquí
+      repo_token: ${{ secrets.GITHUB_TOKEN }}
