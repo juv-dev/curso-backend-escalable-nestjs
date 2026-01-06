@@ -1,4 +1,4 @@
-name: Check PR Title
+name: Delete Branch After Merge
 
 on:
   pull_request:
@@ -7,4 +7,9 @@ on:
 
 jobs:
   delete-merged-branch:
+    if: github.event.pull_request.merged == true
     uses: juv-dev/workflows-frontend/.github/workflows/delete-branch-after-merge.yml@main
+    with:
+      branch_name: ${{ github.event.pull_request.head.ref }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
