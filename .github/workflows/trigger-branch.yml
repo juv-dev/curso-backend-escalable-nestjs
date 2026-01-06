@@ -11,18 +11,20 @@ on:
         required: true
 
 jobs:
-  delete-branch:
+  trigger-delete:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger delete-branch
+      - name: Disparar delete-branch
         uses: actions/github-script@v6
         with:
           script: |
             const [owner, repo] = '${{ github.event.inputs.repo }}'.split('/');
-            await github.rest.repos.createDispatchEvent({
+            const octokit = github.getOctokit('${{ secrets.REPO_ACCESS_TOKEN }}');
+            
+            await octokit.rest.repos.createDispatchEvent({
               owner: owner,
               repo: repo,
-              event_type: 'delete_branch',
+              event_type: 'delete-branch',
               client_payload: {
                 branch: '${{ github.event.inputs.branch }}'
               }
