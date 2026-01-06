@@ -15,4 +15,4 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.merge_commit_sha }}
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      repo_token: ${{ secrets.GITHUB_TOKEN }}  # Changed to use repo_token
