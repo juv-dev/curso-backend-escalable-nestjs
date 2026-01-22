@@ -43,27 +43,36 @@ jobs:
             
             // Only consider the most recent commit for version bumping
             if (commits.data.length > 0) {
-              const latestCommit = commits.data[0].commit.message.split('\n')[0];
-              console.log(`Latest commit: ${latestCommit}`);
+              const latestCommit = commits.data[0].commit.message;
+              const commitMessage = latestCommit.split('\n')[0].trim();
               
-              const match = latestCommit.match(/^(\w+)(?:\([^)]*\))?(!?):/i);
+              console.log('Raw commit message:', latestCommit);
+              console.log('Processing commit message:', commitMessage);
+              
+              // Improved regex to handle formats like:
+              // feat(ABC-123): description
+              // fix(ABC-456): description
+              // feat (ABC-123) : description
+              const match = commitMessage.match(/^(\w+)\s*\(\s*([^)]+)\s*\)\s*:\s*(.+)/i);
               
               if (match) {
-                const type = match[1].toLowerCase();
-                const isBreaking = match[2] === '!';
+                const type = match[1].toLowerCase().trim();
+                const scope = match[2].trim();
+                const description = match[3].trim();
                 
-                console.log(`- Type: ${type}, Breaking: ${isBreaking}`);
+                console.log(`- Type: "${type}", Scope: "${scope}", Description: "${description}"`);
                 
-                if (isBreaking) {
-                  bump = 'major';
-                  console.log('Bump type: major (breaking change)');
-                } else if (type === 'feat') {
+                if (type === 'feat') {
                   bump = 'minor';
                   console.log('Bump type: minor (feature)');
                 } else if (type === 'fix') {
                   bump = 'patch';
                   console.log('Bump type: patch (fix)');
+                } else {
+                  console.log(`Type "${type}" not specifically handled, defaulting to patch`);
                 }
+              } else {
+                console.log('Commit message does not match expected format, defaulting to patch');
               }
             }
 
