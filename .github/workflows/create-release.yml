@@ -20,16 +20,8 @@ jobs:
       - name: Get tag name
         id: get-tag
         run: |
-          # Obtener el nombre del tag sin prefijos
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            TAG_NAME="${GITHUB_REF#refs/tags/}"
-          else
-            TAG_NAME="${GITHUB_REF#refs/heads/}"
-          fi
-          # Asegurarse de que el tag comience con 'v' si no lo hace
-          if [[ ! "$TAG_NAME" =~ ^v ]]; then
-            TAG_NAME="v$TAG_NAME"
-          fi
+          # Extraer el nombre del tag del GITHUB_REF (formato: refs/tags/v1.2.3)
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "Using tag: $TAG_NAME"
 
@@ -37,7 +29,9 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const tag = '${{ steps.get-tag.outputs.TAG_NAME }}';
+            const { GITHUB_REF } = process.env;
+            // Extraer el tag del GITHUB_REF (formato: refs/tags/v1.2.3)
+            const tag = GITHUB_REF.replace('refs/tags/', '');
             console.log(`Creating release for tag: ${tag}`);
             
             try {
