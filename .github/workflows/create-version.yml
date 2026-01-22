@@ -38,8 +38,10 @@ jobs:
               pull_number: context.issue.number
             });
 
+            console.log(`Total commits in PR: ${commits.data.length}`);
             let hasFeat = false;
             let hasBreaking = false;
+            let hasFix = false;
 
             for (const commit of commits.data) {
               const message = commit.commit.message.split('\n')[0]; // Solo la primera línea
@@ -56,6 +58,8 @@ jobs:
                 
                 if (type === 'feat') {
                   hasFeat = true;
+                } else if (type === 'fix') {
+                  hasFix = true;
                 }
                 if (isBreaking) {
                   hasBreaking = true;
@@ -71,10 +75,14 @@ jobs:
             } else if (hasFeat) {
               bump = 'minor';
               console.log('Bump type: minor (feature detected)');
+            } else if (hasFix) {
+              bump = 'patch';
+              console.log('Bump type: patch (fix detected)');
             } else {
-              console.log('Bump type: patch (default for fixes)');
+              console.log('Bump type: patch (default)');
             }
 
+            console.log(`Final bump type: ${bump}`);
             core.setOutput('bump', bump);
 
       - name: Bump version
