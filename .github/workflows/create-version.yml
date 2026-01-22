@@ -39,16 +39,14 @@ jobs:
             });
 
             console.log(`Total commits in PR: ${commits.data.length}`);
-            let hasFeat = false;
-            let hasBreaking = false;
-            let hasFix = false;
-
-            for (const commit of commits.data) {
-              const message = commit.commit.message.split('\n')[0]; // Solo la primera línea
-              console.log(`Processing commit: ${message}`);
+            let bump = 'patch'; // Default to patch
+            
+            // Only consider the most recent commit for version bumping
+            if (commits.data.length > 0) {
+              const latestCommit = commits.data[0].commit.message.split('\n')[0];
+              console.log(`Latest commit: ${latestCommit}`);
               
-              // Ajustar la expresión regular para capturar mejor los tipos de commit
-              const match = message.match(/^(\w+)(?:\([^)]*\))?(!?):/);
+              const match = latestCommit.match(/^(\w+)(?:\([^)]*\))?(!?):/i);
               
               if (match) {
                 const type = match[1].toLowerCase();
@@ -56,30 +54,17 @@ jobs:
                 
                 console.log(`- Type: ${type}, Breaking: ${isBreaking}`);
                 
-                if (type === 'feat') {
-                  hasFeat = true;
-                } else if (type === 'fix') {
-                  hasFix = true;
-                }
                 if (isBreaking) {
-                  hasBreaking = true;
-                  break;
+                  bump = 'major';
+                  console.log('Bump type: major (breaking change)');
+                } else if (type === 'feat') {
+                  bump = 'minor';
+                  console.log('Bump type: minor (feature)');
+                } else if (type === 'fix') {
+                  bump = 'patch';
+                  console.log('Bump type: patch (fix)');
                 }
               }
-            }
-
-            let bump = 'patch'; // Por defecto para fix
-            if (hasBreaking) {
-              bump = 'major';
-              console.log('Bump type: major (breaking change detected)');
-            } else if (hasFeat) {
-              bump = 'minor';
-              console.log('Bump type: minor (feature detected)');
-            } else if (hasFix) {
-              bump = 'patch';
-              console.log('Bump type: patch (fix detected)');
-            } else {
-              console.log('Bump type: patch (default)');
             }
 
             console.log(`Final bump type: ${bump}`);
