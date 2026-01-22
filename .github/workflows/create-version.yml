@@ -3,12 +3,12 @@ name: Create Version
 on:
   pull_request:
     branches: [main]
-    types: [closed]
+    types: [opened, synchronize, reopened]  # Se ejecuta cuando se abre o actualiza el PR
 
 jobs:
   bump-version:
-    # Solo ejecutar si el PR se fusionó (no cerrado sin merge)
-    if: github.event.pull_request.merged == true && !startsWith(github.head_ref, 'bump-version-')
+    # Solo ejecutar si el PR está abierto
+    if: github.event.pull_request.state == 'open' && !startsWith(github.head_ref, 'bump-version-')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -86,7 +86,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add package.json
-          git commit -m "feat(main): bump version to v$NEW"
+          git commit -m "chore: bump version to $NEW [skip ci]"
           git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
 
           echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
