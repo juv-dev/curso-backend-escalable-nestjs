@@ -1,13 +1,9 @@
 name: Create Release
 
 on:
-  workflow_run:
-    workflows: ["Create Tag"]
-    types: 
-      - completed
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'  # Solo se activa para tags con formato de versión (v1.2.3)
 
 jobs:
   release:
