@@ -1,28 +1,24 @@
 name: Delete Branch After Merge
 
 on:
-  workflow_run:
-    workflows: ["Create Release"]
-    types: 
-      - completed
   pull_request:
     types: [closed]
-
 jobs:
   delete-branch:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Delete feature/fix branch
+        uses: actions/checkout@v4
+      - name: Delete branch
         if: |
-          github.event.pull_request.head.ref != 'refs/heads/develop' &&
-          github.event.pull_request.head.ref != 'refs/heads/main' &&
-          (startsWith(github.event.pull_request.head.ref, 'refs/heads/feature/') || 
-           startsWith(github.event.pull_request.head.ref, 'refs/heads/fix/'))
+          !contains(github.event.pull_request.head.ref, 'dependabot/') &&
+          github.event.pull_request.head.ref != 'develop' &&
+          github.event.pull_request.head.ref != 'main' &&
+          (startsWith(github.event.pull_request.head.ref, 'feature/') || 
+           startsWith(github.event.pull_request.head.ref, 'fix/'))
         uses: dawidd6/action-delete-branch@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

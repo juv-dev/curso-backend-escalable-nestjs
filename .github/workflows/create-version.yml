@@ -38,14 +38,40 @@ jobs:
               pull_number: context.issue.number
             });
 
-            const types = commits.data.map(commit => {
-              const match = commit.commit.message.match(/^(feat|fix)(\([a-z-]+\))?(!)?:/i);
-              return match ? match[1].toLowerCase() + (match[3] ?? '') : null;
-            }).filter(Boolean);
+            let hasFeat = false;
+            let hasBreaking = false;
 
-            let bump = 'patch';
-            if (types.some(t => t === 'feat')) bump = 'minor';
-            if (types.some(t => t.includes('!'))) bump = 'major';
+            for (const commit of commits.data) {
+              const message = commit.commit.message.split('\n')[0]; // Solo la primera línea
+              const match = message.match(/^(feat|fix)(\([a-z-]+\))?(!)?:/i);
+              
+              if (match) {
+                const type = match[1].toLowerCase();
+                const isBreaking = match[3] === '!';
+                
+                console.log(`Commit: ${message}`);
+                console.log(`- Type: ${type}, Breaking: ${isBreaking}`);
+                
+                if (type === 'feat') {
+                  hasFeat = true;
+                }
+                if (isBreaking) {
+                  hasBreaking = true;
+                  break; // Si hay un breaking change, no necesitamos seguir revisando
+                }
+              }
+            }
+
+            let bump = 'patch'; // Por defecto para fix
+            if (hasBreaking) {
+              bump = 'major';
+              console.log('Bump type: major (breaking change detected)');
+            } else if (hasFeat) {
+              bump = 'minor';
+              console.log('Bump type: minor (feature detected)');
+            } else {
+              console.log('Bump type: patch (default for fixes)');
+            }
 
             core.setOutput('bump', bump);
 
