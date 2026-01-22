@@ -43,13 +43,15 @@ jobs:
 
             for (const commit of commits.data) {
               const message = commit.commit.message.split('\n')[0]; // Solo la primera línea
-              const match = message.match(/^(feat|fix)(\([a-z-]+\))?(!)?:/i);
+              console.log(`Processing commit: ${message}`);
+              
+              // Ajustar la expresión regular para capturar mejor los tipos de commit
+              const match = message.match(/^(\w+)(?:\([^)]*\))?(!?):/);
               
               if (match) {
                 const type = match[1].toLowerCase();
-                const isBreaking = match[3] === '!';
+                const isBreaking = match[2] === '!';
                 
-                console.log(`Commit: ${message}`);
                 console.log(`- Type: ${type}, Breaking: ${isBreaking}`);
                 
                 if (type === 'feat') {
@@ -57,7 +59,7 @@ jobs:
                 }
                 if (isBreaking) {
                   hasBreaking = true;
-                  break; // Si hay un breaking change, no necesitamos seguir revisando
+                  break;
                 }
               }
             }
