@@ -3,12 +3,12 @@ name: Create Version
 on:
   pull_request:
     branches: [main]
-    types: [closed]
+    types: [opened, synchronize, reopened]  # Se ejecuta cuando se abre o actualiza el PR
 
 jobs:
   bump-version:
-    # Solo ejecutar si el PR se fusionó (no cerrado sin merge)
-    if: github.event.pull_request.merged == true && !startsWith(github.head_ref, 'bump-version-')
+    # Solo ejecutar si el PR está abierto
+    if: github.event.pull_request.state == 'open' && !startsWith(github.head_ref, 'bump-version-')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,15 +38,49 @@ jobs:
               pull_number: context.issue.number
             });
 
-            const types = commits.data.map(commit => {
-              const match = commit.commit.message.match(/^(feat|fix)(\([a-z-]+\))?(!)?:/i);
-              return match ? match[1].toLowerCase() + (match[3] ?? '') : null;
-            }).filter(Boolean);
+            console.log(`Total commits in PR: ${commits.data.length}`);
+            let bump = 'patch'; // Default to patch
+            
+            // Filtrar commits de bump de versión
+            const filteredCommits = commits.data.filter(commit => 
+              !commit.commit.message.includes('bump version to v') &&
+              !commit.commit.message.startsWith('chore: bump version to ')
+            );
 
-            let bump = 'patch';
-            if (types.some(t => t === 'feat')) bump = 'minor';
-            if (types.some(t => t.includes('!'))) bump = 'major';
+            console.log(`Non-version commits found: ${filteredCommits.length}`);
+            
+            if (filteredCommits.length > 0) {
+              const latestCommit = filteredCommits[0].commit.message;
+              const commitMessage = latestCommit.split('\n')[0].trim();
+              
+              console.log('Latest non-version commit:', commitMessage);
+              
+              const match = commitMessage.match(/^(\w+)\s*\(\s*([^)]+)\s*\)\s*:\s*(.+)/i);
+              
+              if (match) {
+                const type = match[1].toLowerCase().trim();
+                const scope = match[2].trim();
+                const description = match[3].trim();
+                
+                console.log(`- Type: "${type}", Scope: "${scope}", Description: "${description}"`);
+                
+                if (type === 'feat') {
+                  bump = 'minor';
+                  console.log('Bump type: minor (feature)');
+                } else if (type === 'fix') {
+                  bump = 'patch';
+                  console.log('Bump type: patch (fix)');
+                } else {
+                  console.log(`Type "${type}" not specifically handled, defaulting to patch`);
+                }
+              } else {
+                console.log('Commit message does not match expected format, defaulting to patch');
+              }
+            } else {
+              console.log('No non-version commits found, defaulting to patch');
+            }
 
+            console.log(`Final bump type: ${bump}`);
             core.setOutput('bump', bump);
 
       - name: Bump version
@@ -86,7 +120,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add package.json
-          git commit -m "feat(main): bump version to v$NEW"
+          git commit -m "chore: bump version to $NEW [skip ci]"
           git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
 
           echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
