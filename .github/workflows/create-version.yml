@@ -41,18 +41,20 @@ jobs:
             console.log(`Total commits in PR: ${commits.data.length}`);
             let bump = 'patch'; // Default to patch
             
-            // Only consider the most recent commit for version bumping
-            if (commits.data.length > 0) {
-              const latestCommit = commits.data[0].commit.message;
+            // Filtrar commits de bump de versión
+            const filteredCommits = commits.data.filter(commit => 
+              !commit.commit.message.includes('bump version to v') &&
+              !commit.commit.message.startsWith('chore: bump version to ')
+            );
+
+            console.log(`Non-version commits found: ${filteredCommits.length}`);
+            
+            if (filteredCommits.length > 0) {
+              const latestCommit = filteredCommits[0].commit.message;
               const commitMessage = latestCommit.split('\n')[0].trim();
               
-              console.log('Raw commit message:', latestCommit);
-              console.log('Processing commit message:', commitMessage);
+              console.log('Latest non-version commit:', commitMessage);
               
-              // Improved regex to handle formats like:
-              // feat(ABC-123): description
-              // fix(ABC-456): description
-              // feat (ABC-123) : description
               const match = commitMessage.match(/^(\w+)\s*\(\s*([^)]+)\s*\)\s*:\s*(.+)/i);
               
               if (match) {
@@ -74,6 +76,8 @@ jobs:
               } else {
                 console.log('Commit message does not match expected format, defaulting to patch');
               }
+            } else {
+              console.log('No non-version commits found, defaulting to patch');
             }
 
             console.log(`Final bump type: ${bump}`);
