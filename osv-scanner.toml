@@ -1,0 +1,38 @@
+# OSV-Scanner configuration for educational/course repository
+# Course repo with typscript-intro/ subproject with intentionally older deps
+
+[[PackageOverrides]]
+name = "axios"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — not production"
+
+[[PackageOverrides]]
+name = "follow-redirects"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — transitive of axios"
+
+[[PackageOverrides]]
+name = "picomatch"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — transitive"
+
+[[PackageOverrides]]
+name = "postcss"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — older Vite tooling"
+
+[[PackageOverrides]]
+name = "rollup"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — older bundler"
+
+[[PackageOverrides]]
+name = "vite"
+ecosystem = "npm"
+ignore = true
+reason = "Course subproject — older Vite for lessons"

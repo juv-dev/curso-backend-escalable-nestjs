@@ -1,0 +1,7 @@
+{
+  "7528790d0cb2a847b21bcbf97f0d9408_0": {
+    "author": "juv-dev",
+    "comment": "Course/learning code in typscript-intro/src/main.ts. Demonstrates DOM manipulation with innerHTML for educational purposes — not a real production XSS vector.",
+    "ignored_at": "2026-05-23T09:00:00.000Z"
+  }
+}
